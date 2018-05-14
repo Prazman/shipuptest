@@ -42,36 +42,7 @@ function load(method, url, data, successcallback, errorcallback) {
         xhr.send();
     }
 }
-/*class UnitInput extends Component{
-    constructor(props) {
-    super(props);
-    this.state = {unit: "imperial"};
-  }
-  render(){
-    return (
-      <select id="unitInput" value={(this.state.unit=="metric")}>
-        <option value="metric" >Metric </option>
-        <option vamue="imperial" > Imperial </option>
-      </select>
-      )
-  }
-}
-class WeatherPage extends Component{
-  constructor(props) {
-    super(props);
-    this.weather = {};
-  }
-  render(){
-    return (
-      <div id="weatherPage">
-        <div>Current Time</div>
-        <div> Current Temperature </div>
-        <div> Current Weather </div>
-        <div> Current Wind Speed </div>
-      </div>
-          )
-  }
-}*/
+
 function UnitSelector(props){
   return (
       <select id="unitInput" value={props.unit}>
@@ -81,19 +52,34 @@ function UnitSelector(props){
       )
 }
 function WeatherPage(props){
-  console.log(props);
+
   if(props.weather){
     return (
       <div id="weatherPage">
-        <div>Current Time: 
-        <span>{props.time.toString()}</span>
-        </div>
         <div> Current Temperature:  
         <span>{props.weather.main.temp - 273.15}</span></div>
         <div> Current Weather :
         <span>{props.weather.weather[0].description}</span>
         </div>
         <div> Current Wind Speed </div>
+        <span>{props.weather.wind.speed}</span>
+      </div>
+          )
+  }
+  return <div> Loading</div>
+}
+function SunrisePage(props){
+
+  if(props.weather){
+    const sunrise = new Date(props.weather.sys.sunrise*1000)
+    const sunset = new Date(props.weather.sys.sunset*1000)
+    return (
+      <div id="sunrisePage">
+        <div> Sunrise at :  
+        <span>{sunrise.toString()}</span></div>
+        <div> Sunsets at :
+        <span>{sunset.toString()}</span>
+        </div>
       </div>
           )
   }
@@ -112,12 +98,13 @@ class App extends Component {
           <img src={logo} className="App-logo" alt="logo" />
           <h1 className="App-title">ShipUp Front End Challenge</h1>
         </header>
-        <p className="App-intro">
-          To get started, edit <code>src/App.js</code> and save to reload.
-        </p>
-        <UnitSelector unit={this.state.unit}></UnitSelector>
-        <WeatherPage weather={this.state.weather} time={this.state.time}></WeatherPage>
 
+        <UnitSelector unit={this.state.unit}></UnitSelector>
+        <div>Current Time: 
+        <span>{this.state.time.toString()}</span>
+        </div>
+        <WeatherPage weather={this.state.weather}></WeatherPage>
+        <SunrisePage weather={this.state.weather}></SunrisePage>
       </div>
     );
   }
