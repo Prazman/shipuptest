@@ -4,7 +4,9 @@ import './App.css';
 import load from "./xhr.js"
 let openWeatherUrl = "http://api.openweathermap.org/data/2.5/weather"
 let openWeatherKey = "39c69f3ef4fb87b25ac56fbeef4398ca"
-
+/*
+Page selector component (to switch between weather and sunrise/sunset)
+*/
 function PageSelector(props){
   return (<div>
             <button value="weatherpage" onClick={props.onButtonClicked} > Weather </button>
@@ -12,6 +14,9 @@ function PageSelector(props){
           </div>
             )
 }
+/*
+UnitSelector Component (to switch metric/imperial unit system)
+*/
 function UnitSelector(props){
   return (
     <div>
@@ -23,6 +28,9 @@ function UnitSelector(props){
     </div>
       )
 }
+/*
+Weather page component: display the current weather in chosen unit system
+*/
 function WeatherPage(props){
 
   if(props.weather){
@@ -56,6 +64,9 @@ function WeatherPage(props){
   }
   return <div> Loading</div>
 }
+/*
+Sunrise/Sunset page component: displays sunrise time, sunset time
+*/
 function SunrisePage(props){
 
   if(props.weather){
@@ -77,6 +88,9 @@ function SunrisePage(props){
   }
   return <div> Loading</div>
 }
+/*
+Main app component
+*/
 class App extends Component {
   constructor(props) {
     super(props);
@@ -112,17 +126,30 @@ class App extends Component {
       </div>
     );
   }
+  /*
+  Initialize weather data on component mount
+  */
   componentDidMount(){
     this.fetchData(this.state.unit)
   }
+  /*
+  Switch between weather and sunrise/sunset
+  */
+  changePageState(event){
+    this.setState({page: event.target.value})
+  }
+  /*
+  Switch unit system
+  */
   changeButtonState(event) {
-    console.log('set to ' + event.target.value)
     this.setState({unit: event.target.value})
     this.fetchData(event.target.value)
 
-}
-
-fetchData(unit){
+  }
+  /*
+  Fetch data from openweatherapi
+  */
+  fetchData(unit){
   let self = this
     load("GET",openWeatherUrl + "?q=Paris&units="+ unit+"&APPID="+openWeatherKey,null,function(response){
       self.setState({weather: JSON.parse(response.response), time:new Date()}) 
@@ -131,10 +158,7 @@ fetchData(unit){
       console.log(error);
     })
 }
-  changePageState(event){
-this.setState({page: event.target.value})
 
-}
 }
 
 export default App;
