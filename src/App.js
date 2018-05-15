@@ -5,13 +5,22 @@ import load from "./xhr.js"
 let openWeatherUrl = "http://api.openweathermap.org/data/2.5/weather"
 let openWeatherKey = "39c69f3ef4fb87b25ac56fbeef4398ca"
 
-
+function PageSelector(props){
+  return (<div>
+            <button value="weatherpage" onClick={props.onButtonClicked} > Weather </button>
+            <button value="sunrisepage" onClick={props.onButtonClicked} > Sunrise/Sunset </button>
+          </div>
+            )
+}
 function UnitSelector(props){
   return (
-      <select onChange={props.onSelectChange} id="unitInput" >
-        <option value="metric" >Metric </option>
-        <option value="imperial" > Imperial </option>
-      </select>
+    <div>
+    <label for="unitInput"> Unit System </label>
+    <select onChange={props.onSelectChange} id="unitInput" >
+      <option value="metric" >Metric </option>
+      <option value="imperial" > Imperial </option>
+    </select>
+    </div>
       )
 }
 function WeatherPage(props){
@@ -29,16 +38,20 @@ function WeatherPage(props){
     }
 
     return (
-      <div id="weatherPage">
-        <div> Current Temperature:  
-        <span>{temp}</span></div>
-        <div> Current Weather :
-        <span>{props.weather.weather[0].description}</span>
-        </div>
-        <div> Current Wind Speed :
-        <span>{wind_speed} </span>
-        </div>
-      </div>
+      <table className="table table-bordered">
+        <tr> 
+          <td>Temperature  </td>
+          <td>{temp}</td>
+        </tr>
+        <tr> 
+          <td> Weather description </td>
+          <td>{props.weather.weather[0].description}</td>
+        </tr>
+        <tr> 
+          <td> Wind Speed  </td>
+          <td>{wind_speed}</td>
+        </tr>
+      </table>
           )
   }
   return <div> Loading</div>
@@ -49,13 +62,17 @@ function SunrisePage(props){
     const sunrise = new Date(props.weather.sys.sunrise*1000).toLocaleTimeString()
     const sunset = new Date(props.weather.sys.sunset*1000).toLocaleTimeString()
     return (
-      <div id="sunrisePage">
-        <div> Sunrise at :  
-        <span>{sunrise.toString()}</span></div>
-        <div> Sunsets at :
-        <span>{sunset.toString()}</span>
-        </div>
-      </div>
+      <table className="table table-bordered">
+        <tr> 
+          <td>Sunrise </td>
+          <td> {sunrise.toString()}</td>
+        </tr>
+        <tr> 
+          <td>Sunset </td>
+          <td> {sunset.toString()}</td>
+        </tr>
+        
+        </table>
           )
   }
   return <div> Loading</div>
@@ -69,10 +86,13 @@ class App extends Component {
   }
   render() {
     let component
-    if(this.state.page="weatherpage"){
+    let title
+    if(this.state.page=="weatherpage"){
+      title= "Weather"
       component = <WeatherPage unit={this.state.unit} weather={this.state.weather}></WeatherPage>
     }
     else{
+      title = "Sunrise/Sunset"
       component = <SunrisePage weather={this.state.weather}></SunrisePage>
     }
     return (
@@ -81,10 +101,9 @@ class App extends Component {
           <img src={logo} className="App-logo" alt="logo" />
           <h1 className="App-title">ShipUp Front End Challenge</h1>
         </header>
-        <button onClick={this.togglePage.bind(this, "weatherpage")}>Weather</button>
-        <button onClick={this.togglePage.bind(this, "sunrisepage")}>Sunrise/Sunset</button>
+        <PageSelector onButtonClicked={this.changePageState.bind(this)}></PageSelector>
         <UnitSelector onSelectChange={this.changeButtonState.bind(this)} unit={this.state.unit}></UnitSelector>
-        <h2> {this.state.title} </h2>
+        <h2> {title} </h2>
         <div>Current Time: 
         <span>{this.state.time.toString()}</span>
         </div>
@@ -102,21 +121,20 @@ class App extends Component {
     this.fetchData(event.target.value)
 
 }
-togglePage(new_page){
-  console.log(new_page)
-  this.setState({page: new_page})
-  console.log(this.state)
-}
+
 fetchData(unit){
   let self = this
     load("GET",openWeatherUrl + "?q=Paris&units="+ unit+"&APPID="+openWeatherKey,null,function(response){
-      self.setState({weather: JSON.parse(response.response)}) 
+      self.setState({weather: JSON.parse(response.response), time:new Date()}) 
       console.log(self.state)
     },function(error){
       console.log(error);
     })
 }
-  
+  changePageState(event){
+this.setState({page: event.target.value})
+
+}
 }
 
 export default App;
