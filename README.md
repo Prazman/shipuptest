@@ -1,12 +1,12 @@
-#Ship Up Front End test
+# Ship Up Front End test
 
-##Requirements
+## Requirements
 Node.js server and NPM
 
-##Dependencies
+## Dependencies
 React.js
 
-##Usage
+## Usage
 - Unzip the file to a folder
 - Run *npm install* to install dependencies
 - Run *npm start* to start the development server
