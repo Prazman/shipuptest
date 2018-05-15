@@ -1,47 +1,10 @@
 import React, { Component } from 'react';
 import logo from './logo.svg';
 import './App.css';
+import load from "./xhr.js"
 let openWeatherUrl = "http://api.openweathermap.org/data/2.5/weather"
 let openWeatherKey = "39c69f3ef4fb87b25ac56fbeef4398ca"
-function load(method, url, data, successcallback, errorcallback) {
-    var xhr;
 
-    xhr = new XMLHttpRequest();
-
-
-    xhr.onreadystatechange = ensureReadiness;
-
-    function ensureReadiness() {
-        if (xhr.readyState < 4) {
-            return;
-        }
-
-        if (xhr.status !== 200) {
-            errorcallback(xhr);
-            return;
-        }
-
-        // all is well  
-        if (xhr.readyState === 4) {
-            successcallback(xhr);
-        }
-    }
-
-    xhr.open(method, url, true);
-    if (method == "POST") {
-        xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-        var params = typeof data == 'string' ? data : Object.keys(data).map(
-            function(k) {
-                var datastring = (data[k])?encodeURIComponent(data[k]):'';
-                return encodeURIComponent(k) + '=' + datastring;
-            }
-        ).join('&');
-
-        xhr.send(params);
-    } else {
-        xhr.send();
-    }
-}
 
 function UnitSelector(props){
   return (
@@ -102,11 +65,11 @@ class App extends Component {
     super(props);
     this.state = {time: new Date(),
                   unit:"metric",
-                  page:"weather"};
+                  page:"weatherpage"};
   }
   render() {
     let component
-    if(this.state.page="weather"){
+    if(this.state.page="weatherpage"){
       component = <WeatherPage unit={this.state.unit} weather={this.state.weather}></WeatherPage>
     }
     else{
@@ -118,7 +81,8 @@ class App extends Component {
           <img src={logo} className="App-logo" alt="logo" />
           <h1 className="App-title">ShipUp Front End Challenge</h1>
         </header>
-
+        <button onClick={this.togglePage.bind(this, "weatherpage")}>Weather</button>
+        <button onClick={this.togglePage.bind(this, "sunrisepage")}>Sunrise/Sunset</button>
         <UnitSelector onSelectChange={this.changeButtonState.bind(this)} unit={this.state.unit}></UnitSelector>
         <h2> {this.state.title} </h2>
         <div>Current Time: 
@@ -137,6 +101,11 @@ class App extends Component {
     this.setState({unit: event.target.value})
     this.fetchData(event.target.value)
 
+}
+togglePage(new_page){
+  console.log(new_page)
+  this.setState({page: new_page})
+  console.log(this.state)
 }
 fetchData(unit){
   let self = this
